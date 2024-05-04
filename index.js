@@ -14,7 +14,7 @@ const XLSX = require("xlsx");
   });
 
   let ProductCards = [];
-  for (let linkNumber = 0; linkNumber < 20; linkNumber++) {
+  for (let linkNumber = 0; linkNumber < 10; linkNumber++) {
     const itemPage = await browser.newPage();
     await itemPage.goto(arr[linkNumber].Link);
 
@@ -70,8 +70,8 @@ const XLSX = require("xlsx");
           productTypeTypeId: "productType.typeId",
           productType: "product-type",
         },
-        { name: "name.en-GB", productName: titleDetails },
-        { slugEn: "slug.en-GB", slugEnName: `snowboardSlug10${linkNumber}` },
+        { name: "name.en-US", productName: titleDetails },
+        { slugEn: "slug.en-US", slugEnName: `snowboardSlug10${linkNumber}` },
         { variantsKey: "variants.key", slugEnName: `SNW-${linkNumber}-01` },
       ];
       // productDetails.forEach(({ featureName, featureDescription }) => {
@@ -82,12 +82,13 @@ const XLSX = require("xlsx");
       });
       return ProductCard;
     }, linkNumber);
+    console.log(ProductCard);
     itemPage.close();
     if (ProductCard && ProductCard.length > 0) {
       let dataArray = ProductCard.map((obj) => Object.values(obj));
       ProductCards.push(dataArray);
     }
-    console.log(createKeyValueArrays(ProductCards));
+    // console.log(createKeyValueArrays(ProductCards));
   }
 
   function createKeyValueArrays(arrays) {
@@ -95,7 +96,7 @@ const XLSX = require("xlsx");
 
     arrays.forEach((array) => {
       array.forEach((pair) => {
-        keysObj[pair[0]] = undefined;
+        keysObj[pair[0]] = "";
       });
     });
 
@@ -108,25 +109,25 @@ const XLSX = require("xlsx");
       let valuesArray = [];
       keys.forEach((key) => {
         let value = array.find((pair) => pair[0] === key);
-        valuesArray.push(value ? value[1] : undefined);
+        valuesArray.push(value ? value[1] : "");
       });
       result.push(valuesArray);
     });
 
     return result;
   }
-  // CSV
-  let ws = XLSX.utils.aoa_to_sheet(ProductCards);
-  let csvContent = XLSX.utils.sheet_to_csv(ws);
-  let filePath = "ProductCards.csv";
-  fs.writeFileSync(filePath, csvContent);
+  // CSV export
+  let wc = XLSX.utils.aoa_to_sheet(createKeyValueArrays(ProductCards));
+  let csvContent = XLSX.utils.sheet_to_csv(wc);
+  let filePathCsv = "ProductCards.csv";
+  fs.writeFileSync(filePathCsv, csvContent);
 
-  // Excel
-  // let wb = XLSX.utils.book_new();
-  // let ws = XLSX.utils.aoa_to_sheet(createKeyValueArrays(ProductCards));
-  // XLSX.utils.book_append_sheet(wb, ws, "ProductCards");
-  // let filePath = "ProductCards.xlsx";
-  // XLSX.writeFile(wb, filePath);
+  // Excel export
+  let wb = XLSX.utils.book_new();
+  let we = XLSX.utils.aoa_to_sheet(createKeyValueArrays(ProductCards));
+  XLSX.utils.book_append_sheet(wb, we, "ProductCards");
+  let filePathExcel = "ProductCards.xlsx";
+  XLSX.writeFile(wb, filePathExcel);
   console.log(`data exported`);
   await browser.close();
 })();
