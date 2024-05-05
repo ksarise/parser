@@ -17,7 +17,7 @@ const { getCategories } = require("./CategoriesFormatter.js");
   // Start parsing every card
   let ProductCards = [];
   let allCategories = [];
-  for (let linkNumber = 0; linkNumber < 2; linkNumber += 1) {
+  for (let linkNumber = 0; linkNumber < 10; linkNumber += 1) {
     const itemPage = await browser.newPage();
     await itemPage.goto(arr[linkNumber].Link);
 
@@ -90,6 +90,7 @@ const { getCategories } = require("./CategoriesFormatter.js");
       });
       return ProductCard;
     }, linkNumber);
+
     // Get data from script
     const scriptParse = await itemPage.evaluate(() => {
       const scripts = document.querySelectorAll("script");
@@ -117,11 +118,22 @@ const { getCategories } = require("./CategoriesFormatter.js");
         terrain: terrainCat || null,
       };
     });
+    // console.log("KEYS", Object.keys(scriptParse));
     // Format categories
     function addKeys(key) {
+      let mainCats = Array(4);
+      let mainCatsString = "";
+      if (key === "Key") {
+        mainCats.fill("");
+      } else {
+        for (let i = 0; i < 4; i += 1) {
+          mainCats[i] = `${Object.keys(scriptParse)[i]},`;
+          mainCatsString += `${mainCats[i]};`;
+        }
+      }
       let terrainCatToString = "";
       for (let i = 0; i < scriptParse.terrain.length; i += 1) {
-        terrainCatToString += `${scriptParse.terrain[i]}${key}`;
+        terrainCatToString += `${mainCats[3]}${scriptParse.terrain[i]}${key}`;
 
         if (i < scriptParse.terrain.length - 1) {
           terrainCatToString += ";";
@@ -129,17 +141,20 @@ const { getCategories } = require("./CategoriesFormatter.js");
       }
       let productCategories = {
         categories: "categories",
-        catnames: `${scriptParse.abilityLevel}${key};${
-          scriptParse.brand
-        }${key};${scriptParse.ageGroup}${key};${terrainCatToString.trim()}`,
+        catnames: `${mainCatsString}${mainCats[0]}${
+          scriptParse.abilityLevel
+        }${key};${mainCats[1]}${scriptParse.brand}${key};${mainCats[2]}${
+          scriptParse.ageGroup
+        }${key};${terrainCatToString.trim()}`,
       };
+
       return productCategories;
     }
 
     allCategories.push(addKeys(""));
     // console.log("Categories:", Categories);
     ProductCard.push(addKeys("Key"));
-    console.log(ProductCard);
+    // console.log(ProductCard);
     itemPage.close();
     if (ProductCard && ProductCard.length > 0) {
       let dataArray = ProductCard.map((obj) => Object.values(obj));
