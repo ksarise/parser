@@ -1,0 +1,10 @@
+data-object,key,description.en-US,externalId,name.en-US,slug.en-US
+category,Advanced-ExpertKey,Advanced-ExpertDescription,Advanced-ExpertId,Advanced-Expert,Advanced-ExpertSlug
+category,LibTechKey,LibTechDescription,LibTechId,LibTech,LibTechSlug
+category,adult-maleKey,adult-maleDescription,adult-maleId,Adult-male,adult-maleSlug
+category,FreestyleKey,FreestyleDescription,FreestyleId,Freestyle,FreestyleSlug
+category,All-MountainKey,All-MountainDescription,All-MountainId,All-Mountain,All-MountainSlug
+category,FreerideKey,FreerideDescription,FreerideId,Freeride,FreerideSlug
+category,Intermediate-AdvancedKey,Intermediate-AdvancedDescription,Intermediate-AdvancedId,Intermediate-Advanced,Intermediate-AdvancedSlug
+category,RideKey,RideDescription,RideId,Ride,RideSlug
+category,adult-anyKey,adult-anyDescription,adult-anyId,Adult-any,adult-anySlug
