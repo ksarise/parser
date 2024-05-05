@@ -9,7 +9,6 @@ function getCategories(allCategories) {
   }
   function splitStringByComma(str) {
     const parts = str.split(",");
-    console.log(parts);
     if (parts[1] === "") {
       return [parts[0], ""];
     } else {

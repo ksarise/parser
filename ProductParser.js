@@ -23,72 +23,128 @@ const { getCategories } = require("./CategoriesFormatter.js");
 
     // Product Card parse and autoformat
     let ProductCard = await itemPage.evaluate((linkNumber) => {
-      function attribCsvFormat(str) {
-        const index = str.indexOf("(");
-        let newStr = index !== -1 ? str.slice(0, index) : str;
-        return `attributes.${newStr.replace(/\s/g, "")}`;
-      }
-
-      function tableParser(tableRows) {
-        let Specs = [];
-
-        for (
-          let colIndex = 0;
-          colIndex < tableRows[0].childElementCount;
-          colIndex++
-        ) {
-          let Spec = [];
-          tableRows.forEach((row) => {
-            let th = row.querySelector("th");
-            let td = row.querySelectorAll("td")[colIndex];
-
-            if (th && td) {
-              let specName = attribCsvFormat(th.textContent);
-              let specValue = td.textContent.trim();
-              Spec.push({ specName, specValue });
-            }
-          });
-          if (Spec.length > 0) {
-            Specs.push(Spec);
-          }
+      try {
+        function attribCsvFormat(str) {
+          const index = str.indexOf("(");
+          let newStr = index !== -1 ? str.slice(0, index) : str;
+          return `attributes.${newStr.replace(/\s/g, "")}`;
         }
-        return Specs;
-      }
-      let titleDetails = document.querySelector(".pdp-header-title").innerText;
-      let details = document.querySelector(
-        ".pdp-content-section-body"
-      ).children;
-      let productDetails = [];
-      Array.from(details).forEach((element) => {
-        let featureName = element.children[0].innerText.trim();
-        let featureDescription = element.children[1].innerText.trim();
-        productDetails.push({ featureName, featureDescription });
-      });
 
-      let ProductCard = [
-        { dataObject: "data-object", variant: "variant" },
-        { key: "key", snowboardID: `snowboard10${linkNumber}` },
-        {
-          productTypeKey: "productType.key",
-          snowboardTypeKey: "snowboardTypeKey",
-        },
-        {
-          productTypeTypeId: "productType.typeId",
-          productType: "product-type",
-        },
-        { name: "name.en-US", productName: titleDetails },
-        { slugEn: "slug.en-US", slugEnName: `snowboardSlug10${linkNumber}` },
-        { variantsKey: "variants.key", slugEnName: `SNW-${linkNumber}-01` },
-      ];
-      // productDetails.forEach(({ featureName, featureDescription }) => {
-      //   ProductCard.push({ featureName, featureDescription });
-      // });
-      let tableRows = document.querySelectorAll(".spec-table tr");
-      let Specs = tableParser(tableRows);
-      Specs[0].forEach(({ specName, specValue }) => {
-        ProductCard.push({ specName, specValue });
-      });
-      return ProductCard;
+        function tableParser(tableRows) {
+          let Specs = [];
+
+          for (
+            let colIndex = 0;
+            colIndex < tableRows[0].childElementCount;
+            colIndex++
+          ) {
+            let Spec = [];
+            tableRows.forEach((row) => {
+              let th = row.querySelector("th");
+              let td = row.querySelectorAll("td")[colIndex];
+
+              if (th && td) {
+                let specName = attribCsvFormat(th.textContent);
+                let specValue = td.textContent.trim();
+                Spec.push({ specName, specValue });
+              }
+            });
+            if (Spec.length > 0) {
+              Specs.push(Spec);
+            }
+          }
+          return Specs;
+        }
+        let titleDetails =
+          document.querySelector(".pdp-header-title").innerText;
+        let productDescription = document.querySelector(".pdp-details-content")
+          .children[0].textContent;
+        let productPrice = document
+          .querySelector('meta[name="twitter:data1"]')
+          .getAttribute("content")
+          .replace(/\$|\./g, "");
+        let details = document.querySelector(
+          ".pdp-content-section-body"
+        ).children;
+        let productDetails = [];
+        Array.from(details).forEach((element) => {
+          let featureName = element.children[0].innerText.trim();
+          let featureDescription = element.children[1].innerText.trim();
+          productDetails.push({ featureName, featureDescription });
+        });
+        function skuGen(name) {
+          let sum = 0;
+          for (let i = 0; i < name.length; i++) {
+            sum += name.charCodeAt(i);
+          }
+          return sum;
+        }
+        let ProductCard = [
+          { dataObject: "data-object", variant: "variant" },
+          { key: "key", keyValue: `snowboard10${linkNumber}` },
+          {
+            productTypeKey: "productType.key",
+            productTypeKeyValue: "snowboardTypeKey",
+          },
+          {
+            variantSku: "variants.sku",
+            variantSkuValue: `SNW-${skuGen(titleDetails)}-01`,
+          },
+          {
+            description: "description.en-US",
+            descriptionValue: productDescription,
+          },
+          {
+            priceMode: "priceMode",
+            priceModeValue: "Embedded",
+          },
+          {
+            variantPriceKey: "variants.prices.key",
+            variantPriceKeyValue: `SNW-Price-${linkNumber}-01`,
+          },
+          {
+            currency: "variants.prices.value.currencyCode",
+            currencyValue: "USD",
+          },
+          {
+            valueType: "variants.prices.value.type",
+            valueTypeValue: "centPrecision",
+          },
+          {
+            pricesCountry: "variants.prices.country",
+            pricesCountryValue: "US",
+          },
+          {
+            fractionDigits: "variants.prices.value.fractionDigits",
+            fractionDigitsValue: "2",
+          },
+          {
+            centAmount: "variants.prices.value.centAmount",
+            centAmountValue: productPrice,
+          },
+          {
+            productTypeId: "productType.typeId",
+            productTypeIdValue: "product-type",
+          },
+          { name: "name.en-US", nameValue: titleDetails },
+          { slugEn: "slug.en-US", slugEnValue: `snowboardSlug10${linkNumber}` },
+          {
+            variantsKey: "variants.key",
+            variantKeyValue: `SNW-${linkNumber}-01`,
+          },
+        ];
+        // productDetails.forEach(({ featureName, featureDescription }) => {
+        //   ProductCard.push({ featureName, featureDescription });
+        // });
+        let tableRows = document.querySelectorAll(".spec-table tr");
+        let Specs = tableParser(tableRows);
+        Specs[0].forEach(({ specName, specValue }) => {
+          ProductCard.push({ specName, specValue });
+        });
+        return ProductCard;
+      } catch {
+        console.log(linkNumber, error);
+      }
     }, linkNumber);
 
     // Get data from script
