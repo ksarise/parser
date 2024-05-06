@@ -28,14 +28,38 @@ function formatAndExportData(ProductCards, fileName) {
     return result;
   }
   // CSV export
-  let wc = XLSX.utils.aoa_to_sheet(createKeyValueArrays(ProductCards));
-  let csvContent = XLSX.utils.sheet_to_csv(wc);
+  let wb = XLSX.utils.book_new();
+  let we = XLSX.utils.aoa_to_sheet(createKeyValueArrays(ProductCards));
+  let csvContent = XLSX.utils.sheet_to_csv(we);
   let filePathCsv = `${fileName}.csv`;
   fs.writeFileSync(filePathCsv, csvContent);
 
   // Excel export
-  let wb = XLSX.utils.book_new();
-  let we = XLSX.utils.aoa_to_sheet(createKeyValueArrays(ProductCards));
+  // Column auto-size
+  const columnSizes = [];
+  we["!ref"].split(":").forEach((ref) => {
+    const range = XLSX.utils.decode_range(ref);
+    for (let i = range.s.c; i <= range.e.c; ++i) {
+      let maxWidth = 0;
+      for (let j = range.s.r; j <= range.e.r; ++j) {
+        const cell = we[XLSX.utils.encode_cell({ r: j, c: i })];
+        if (cell && cell.v) {
+          const cellWidth = cell.v.toString().length;
+          if (cellWidth > maxWidth) {
+            maxWidth = cellWidth;
+          }
+        }
+      }
+      columnSizes[i] = maxWidth;
+    }
+  });
+  columnSizes.forEach((width, idx) => {
+    if (width > 0) {
+      we["!cols"] = we["!cols"] || [];
+      we["!cols"][idx] = { wch: width + 2 };
+    }
+  });
+
   XLSX.utils.book_append_sheet(wb, we, fileName);
   let filePathExcel = `${fileName}.xlsx`;
   XLSX.writeFile(wb, filePathExcel);

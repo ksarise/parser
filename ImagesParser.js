@@ -37,7 +37,7 @@ const path = require("path");
             const uniqueSrcSet = new Set();
             elements.forEach((element) => {
               const src = element.getAttribute("src");
-              if (src) {
+              if (src && src.indexOf("clone") === -1) {
                 const bigSrc = src.replace("/80/", "/700/");
                 uniqueSrcSet.add(bigSrc);
               }
@@ -50,7 +50,13 @@ const path = require("path");
             ".pdp-hero-alt-thumb"
           );
           let images = getUniqueImagesUrl(productImageElements);
-          let selectedUrls = images.slice(0, 4).concat(images.slice(-2, -1));
+          let selectedUrls;
+          if (images.length >= 6) {
+            selectedUrls = images.slice(0, 4).concat(images.slice(-2, -1));
+          } else {
+            selectedUrls = images;
+          }
+
           return selectedUrls;
         } catch {
           console.error(`Error occurred at ${linkNumber} :`, error);

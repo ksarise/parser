@@ -1,9 +1,5 @@
 const puppeteer = require("puppeteer");
-const fs = require("fs");
-const path = require("path");
-
 const format = require("./AutoFormatter.js");
-const { getCategories } = require("./CategoriesFormatter.js");
 
 (async () => {
   const browser = await puppeteer.launch({ headless: false });
@@ -19,7 +15,6 @@ const { getCategories } = require("./CategoriesFormatter.js");
   });
   // Start parsing every card
   let ProductCards = [];
-  let allCategories = [];
   for (let linkNumber = 0; linkNumber < 10; linkNumber += 1) {
     const itemPage = await browser.newPage();
     await itemPage.goto(arr[linkNumber].Link);
@@ -29,9 +24,23 @@ const { getCategories } = require("./CategoriesFormatter.js");
       try {
         let titleDetails =
           document.querySelector(".pdp-header-title").innerText;
+
         let details = document.querySelector(
           ".pdp-content-section-body"
         ).children;
+
+        function getUniqueImagesUrl(productImagesElem) {
+          const elements = Array.from(productImagesElem);
+          const uniqueSrcSet = new Set();
+          elements.forEach((element) => {
+            const src = element.getAttribute("src");
+            if (src && src.indexOf("clone") === -1) {
+              uniqueSrcSet.add(src);
+            }
+          });
+          return Array.from(uniqueSrcSet);
+        }
+
         function skuGen(name) {
           let sum = 0;
           for (let i = 0; i < name.length; i++) {
@@ -39,8 +48,19 @@ const { getCategories } = require("./CategoriesFormatter.js");
           }
           return sum;
         }
+        let productImageElements = document.querySelectorAll(
+          ".pdp-hero-alt-thumb"
+        );
+        let imagesNumber = getUniqueImagesUrl(productImageElements).length;
+        console.log("iter", linkNumber, "images", imagesNumber);
+        let imagesRowNumber;
+        if (imagesNumber >= 6) {
+          imagesRowNumber = 5;
+        } else {
+          imagesRowNumber = imagesNumber - 1;
+        }
         let ProductCard = [];
-        for (let i = 0; i < 5; i += 1) {
+        for (let i = 0; i < imagesRowNumber; i += 1) {
           let imageCard = [
             { dataObject: "data-object", variant: "image" },
             { key: "key", keyValue: `snowboard10${linkNumber}` },
@@ -70,7 +90,6 @@ const { getCategories } = require("./CategoriesFormatter.js");
             },
           ];
           let dataArray = imageCard.map((obj) => Object.values(obj));
-          console.log(dataArray);
           ProductCard.push(dataArray);
         }
         return ProductCard;
@@ -91,7 +110,6 @@ const { getCategories } = require("./CategoriesFormatter.js");
   function flattenArray(arrayOfArrays) {
     return arrayOfArrays.reduce((acc, curr) => acc.concat(curr), []);
   }
-  console.log(flattenArray(ProductCards));
   format.formatAndExportData(flattenArray(ProductCards), "Assets");
   await browser.close();
 })();
