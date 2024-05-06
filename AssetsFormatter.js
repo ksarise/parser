@@ -58,7 +58,7 @@ const { getCategories } = require("./CategoriesFormatter.js");
             },
             {
               uri: "variants.images.url",
-              uriValue: `https://raw.githubusercontent.com/ksarise/parser/2ac6a84713952960a18eb54cd3ed6b994342fabe/assets/SNW-${linkNumber}-01/${i}.jpg`,
+              uriValue: `https://raw.githubusercontent.com/ksarise/parser/main/assets/SNW-${linkNumber}-01/${i}.jpg`,
             },
             {
               width: "variants.images.dimensions.w",

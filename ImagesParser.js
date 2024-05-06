@@ -18,7 +18,7 @@ const path = require("path");
 
   // Start parsing every card
   let ProductCards = [];
-  for (let linkNumber = 0; linkNumber < 2; linkNumber++) {
+  for (let linkNumber = 0; linkNumber < 10; linkNumber++) {
     try {
       const itemPage = await browser.newPage();
       await itemPage.goto(arr[linkNumber].Link);
