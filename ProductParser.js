@@ -1,4 +1,7 @@
 const puppeteer = require("puppeteer");
+const fs = require("fs");
+const path = require("path");
+
 const format = require("./AutoFormatter.js");
 const { getCategories } = require("./CategoriesFormatter.js");
 
@@ -55,6 +58,7 @@ const { getCategories } = require("./CategoriesFormatter.js");
           }
           return Specs;
         }
+
         let titleDetails =
           document.querySelector(".pdp-header-title").innerText;
         let productDescription = document.querySelector(".pdp-details-content")
