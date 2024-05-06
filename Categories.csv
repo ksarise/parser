@@ -19,3 +19,5 @@ category,Beginner-IntermediateKey,Beginner-IntermediateDescription,Beginner-Inte
 category,RossignolKey,RossignolDescription,RossignolId,Rossignol,RossignolSlug,brandKey,category
 category,adult-femaleKey,adult-femaleDescription,adult-femaleId,Adult-female,adult-femaleSlug,ageGroupKey,category
 category,K2Key,K2Description,K2Id,K2,K2Slug,brandKey,category
+category,GNUKey,GNUDescription,GNUId,GNU,GNUSlug,brandKey,category
+category,BurtonKey,BurtonDescription,BurtonId,Burton,BurtonSlug,brandKey,category

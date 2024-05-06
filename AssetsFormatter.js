@@ -15,7 +15,7 @@ const format = require("./AutoFormatter.js");
   });
   // Start parsing every card
   let ProductCards = [];
-  for (let linkNumber = 0; linkNumber < 10; linkNumber += 1) {
+  for (let linkNumber = 0; linkNumber < 20; linkNumber += 1) {
     const itemPage = await browser.newPage();
     await itemPage.goto(arr[linkNumber].Link);
 
@@ -93,7 +93,7 @@ const format = require("./AutoFormatter.js");
           ProductCard.push(dataArray);
         }
         return ProductCard;
-      } catch {
+      } catch (error) {
         console.log(linkNumber, error);
       }
     }, linkNumber);
