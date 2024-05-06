@@ -1,0 +1,11 @@
+data-object,key,variants.sku,variants.key,variants.images.label,variants.images.url,variants.images.dimensions.w,variants.images.dimensions.h
+image,snowboard100,SNW-3125-01,SNW-0-01,SNW-Image0-01,https://raw.githubusercontent.com/ksarise/parser/2ac6a84713952960a18eb54cd3ed6b994342fabe/assets/SNW-0-01/0.jpg,700,700
+image,snowboard100,SNW-3125-01,SNW-0-01,SNW-Image0-02,https://raw.githubusercontent.com/ksarise/parser/2ac6a84713952960a18eb54cd3ed6b994342fabe/assets/SNW-0-01/1.jpg,700,700
+image,snowboard100,SNW-3125-01,SNW-0-01,SNW-Image0-03,https://raw.githubusercontent.com/ksarise/parser/2ac6a84713952960a18eb54cd3ed6b994342fabe/assets/SNW-0-01/2.jpg,700,700
+image,snowboard100,SNW-3125-01,SNW-0-01,SNW-Image0-04,https://raw.githubusercontent.com/ksarise/parser/2ac6a84713952960a18eb54cd3ed6b994342fabe/assets/SNW-0-01/3.jpg,700,700
+image,snowboard100,SNW-3125-01,SNW-0-01,SNW-Image0-05,https://raw.githubusercontent.com/ksarise/parser/2ac6a84713952960a18eb54cd3ed6b994342fabe/assets/SNW-0-01/4.jpg,700,700
+image,snowboard101,SNW-2365-01,SNW-1-01,SNW-Image1-01,https://raw.githubusercontent.com/ksarise/parser/2ac6a84713952960a18eb54cd3ed6b994342fabe/assets/SNW-1-01/0.jpg,700,700
+image,snowboard101,SNW-2365-01,SNW-1-01,SNW-Image1-02,https://raw.githubusercontent.com/ksarise/parser/2ac6a84713952960a18eb54cd3ed6b994342fabe/assets/SNW-1-01/1.jpg,700,700
+image,snowboard101,SNW-2365-01,SNW-1-01,SNW-Image1-03,https://raw.githubusercontent.com/ksarise/parser/2ac6a84713952960a18eb54cd3ed6b994342fabe/assets/SNW-1-01/2.jpg,700,700
+image,snowboard101,SNW-2365-01,SNW-1-01,SNW-Image1-04,https://raw.githubusercontent.com/ksarise/parser/2ac6a84713952960a18eb54cd3ed6b994342fabe/assets/SNW-1-01/3.jpg,700,700
+image,snowboard101,SNW-2365-01,SNW-1-01,SNW-Image1-05,https://raw.githubusercontent.com/ksarise/parser/2ac6a84713952960a18eb54cd3ed6b994342fabe/assets/SNW-1-01/4.jpg,700,700
