@@ -15,16 +15,12 @@ jobs:
             echo "::set-output name=event_type::Review Requested"
           fi
 
-      - name: Set Notification Message
-        id: set_notification_message
+      - name: Generate Random Event Data
+        id: generate_event_data
+        if: steps.determine_event.outputs.event_type != null
         run: |
-          echo "🚨 ${{ steps.determine_event.outputs.event_type }} 🚨" >> message.txt
-          echo "Author: ${{ github.actor }}" >> message.txt
-          echo "Title: ${{ github.event.pull_request.title }}" >> message.txt
-          if [ "${{ steps.determine_event.outputs.event_type }}" == "Review Requested" ]; then
-            echo "Requested Reviewers: ${{ join(github.event.pull_request.requested_reviewers.*.login, ', ') }}" >> message.txt
-          fi
-          echo "Link: ${{ github.event.pull_request.html_url }}" >> message.txt
+          # Generate some random event data
+          echo "::set-output name=event_data::{\"event1\": \"data1\", \"event2\": \"data2\"}"
 
       - name: Send Telegram Notification
         if: steps.determine_event.outputs.event_type != null
@@ -33,4 +29,8 @@ jobs:
           to: ${{ secrets.TELEGRAM_CHAT_ID }}
           token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           message: |
-            $(cat message.txt)
+            🚨 ${{ steps.determine_event.outputs.event_type }} 🚨
+            ${{ steps.generate_event_data.outputs.event_data }}
+            Author: ${{ github.actor }}
+            Title: ${{ github.event.pull_request.title }}
+            Link: ${{ github.event.pull_request.html_url }}
