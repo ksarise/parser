@@ -55,8 +55,8 @@ jobs:
             special_message=""
           fi
 
-          message="🚨 $event Event 🚨\nAuthor: $author\n$([[ ! -z $requested_reviewers ]] && echo 'Requested Reviewers: '$requested_reviewers)\nTitle: ${{ github.event.pull_request.title }}\nLink: ${{ github.event.pull_request.html_url }}\n$special_message"
-          echo "::set-output name=message::$message"
+          message1="🚨 $event Event 🚨\nAuthor: $author\n$([[ ! -z $requested_reviewers ]] && echo 'Requested Reviewers: '$requested_reviewers)\nTitle: ${{ github.event.pull_request.title }}\nLink: ${{ github.event.pull_request.html_url }}\n$special_message"
+          echo "::set-output name=message::$message1"
 
       - name: Send Telegram Notification
         if: github.event_name == 'pull_request' || steps.check_review_requested.outputs.requested == 'true' || steps.check_reviews.outputs.all_approved == 'true'
