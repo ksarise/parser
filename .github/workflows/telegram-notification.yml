@@ -21,7 +21,7 @@ jobs:
             event="Pull Request"
           fi
 
-          message=$(jq -n --arg event "$event" --arg author "$author" --arg title "${{ github.event.pull_request.title }}" --arg link "${{ github.event.pull_request.html_url }}" '{ event: $event, author: $author, title: $title, link: $link }')
+          message="🚨 $event Event 🚨\nAuthor: $author\nTitle: ${{ github.event.pull_request.title }} Link: ${{ github.event.pull_request.html_url }}"
           echo "::set-output name=message::$message"
 
       - name: Send Telegram Notification
@@ -30,4 +30,15 @@ jobs:
         with:
           to: ${{ secrets.TELEGRAM_CHAT_ID }}
           token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          message: ${{ steps.set_notification_message.outputs.message }}
+          payload: |
+            {
+              "blocks": [
+                  {
+                      "type": "section",
+                      "text": {
+                          "type": "mrkdwn",
+                          "text": ${{ tojson(steps.set_notification_message.outputs.message) }}
+                      }
+                  }
+              ]
+            }
