@@ -9,18 +9,16 @@ jobs:
       - name: Determine Event Type
         id: determine_event
         run: |
-          if [ "${{ github.event.review.state }}" == "approved" ]; then
-            echo "::set-output name=event_type::Review Approved"
-          fi
+          echo "::set-output name=event_type::Review Submitted"
 
       - name: Send Telegram Notification
-        if: steps.determine_event.outputs.event_type == 'Review Approved'
+        if: steps.determine_event.outputs.event_type == 'Review Submitted'
         uses: appleboy/telegram-action@master
         with:
           to: ${{ secrets.TELEGRAM_CHAT_ID }}
           token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           message: |
-            🚨 Review Approved 🚨
+            👀 *Review Submitted* 👀
             Author: ${{ github.actor }}
             Title: ${{ github.event.pull_request.title }}
             Link: ${{ github.event.pull_request.html_url }}
