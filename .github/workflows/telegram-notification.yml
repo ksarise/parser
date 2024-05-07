@@ -27,13 +27,6 @@ jobs:
             echo "::set-output name=requested_reviewers::N/A"
           fi
 
-      - name: Generate Random Event Data
-        id: generate_event_data
-        if: steps.determine_event.outputs.event_type != null
-        run: |
-          # Generate some random event data
-          echo "::set-output name=event_data::{\"event1\": \"data1\", \"event2\": \"data2\"}"
-
       - name: Send Telegram Notification
         if: steps.determine_event.outputs.event_type != null
         uses: appleboy/telegram-action@master
