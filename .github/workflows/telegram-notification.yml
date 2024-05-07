@@ -15,11 +15,25 @@ jobs:
             echo "::set-output name=event_type::Review Requested"
           fi
 
+      - name: Get Pull Request Details
+        id: get_pr_details
+        if: steps.determine_event.outputs.event_type != null
+        run: |
+          author="${{ github.event.pull_request.user.login }}"
+          title="${{ github.event.pull_request.title }}"
+          link="${{ github.event.pull_request.html_url }}"
+          echo "::set-output name=author::$author"
+          echo "::set-output name=title::$title"
+          echo "::set-output name=link::$link"
+
       - name: Send Telegram Notification
-        if: steps.determine_event.outputs.event_type
+        if: steps.determine_event.outputs.event_type != null
         uses: appleboy/telegram-action@master
         with:
           to: ${{ secrets.TELEGRAM_CHAT_ID }}
           token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           message: |
             🚨 ${{ steps.determine_event.outputs.event_type }} 🚨
+            Author: ${{ steps.get_pr_details.outputs.author }}
+            Title: ${{ steps.get_pr_details.outputs.title }}
+            Link: ${{ steps.get_pr_details.outputs.link }}
