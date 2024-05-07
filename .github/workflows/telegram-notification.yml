@@ -1,33 +1,24 @@
-name: Telegram Notification
-
 on:
   pull_request:
     types: [opened, reopened, review_requested]
-  pull_request_review:
-    types: [submitted]
 
 jobs:
   telegram_notification:
     runs-on: ubuntu-latest
     steps:
-      - name: Set Notification Message
-        id: set_notification_message
+      - name: Determine Event Type
+        id: determine_event
         run: |
           if [ "${{ github.event_name }}" == "pull_request_review" ]; then
-            author="${{ github.actor }} request review"
-            event="Pull Request Review"
+            echo "::set-output name=event_type::Pull Request Review"
           else
-            author="${{ github.actor }}"
-            event="Pull Request"
+            echo "::set-output name=event_type::Pull Request"
           fi
 
-          message="🚨 $event Event 🚨\nAuthor: $author\nTitle: ${{ github.event.pull_request.title }}\nLink: ${{ github.event.pull_request.html_url }}"
-          echo "::set-output name=message::$message"
-
       - name: Send Telegram Notification
-        if: github.event_name == 'pull_request' || steps.check_review_requested.outputs.requested == 'true'
         uses: appleboy/telegram-action@master
         with:
           to: ${{ secrets.TELEGRAM_CHAT_ID }}
           token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          message: '{[ 🚨 ${{event}} Event 🚨 {"Title":"${{ github.event.pull_request.title }}","text":{"type":"mrkdwn","text":"${{ github.event.pull_request.html_url }}"}}]}'
+          message: |
+            🚨 ${{ steps.determine_event.outputs.event_type }} 🚨
