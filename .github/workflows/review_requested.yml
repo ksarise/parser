@@ -11,22 +11,6 @@ jobs:
         run: |
           echo "::set-output name=event_type::Review Requested"
 
-      - name: Determine Requested Reviewers
-        id: determine_reviewers
-        if: steps.determine_event.outputs.event_type == 'Review Requested'
-        run: |
-          # Check if requested reviewers exist and if it's an array
-          if [ "${{ github.event.pull_request.requested_reviewers }}" != "null" ] && [ "$(echo "${{ github.event.pull_request.requested_reviewers }}" | jq 'length')" -gt 0 ]; then
-            if [ "$(echo "${{ github.event.pull_request.requested_reviewers }}" | jq 'length')" -gt 1 ]; then
-              last_reviewer=$(echo "${{ github.event.pull_request.requested_reviewers[github.event.pull_request.requested_reviewers.length-1].login }}")
-            else
-              last_reviewer=$(echo "${{ github.event.pull_request.requested_reviewers[0].login }}")
-            fi
-            echo "::set-output name=requested_reviewers::$last_reviewer"
-          else
-            echo "::set-output name=requested_reviewers::N/A"
-          fi
-
       - name: Send Telegram Notification
         if: steps.determine_event.outputs.event_type != null
         uses: appleboy/telegram-action@master
@@ -34,8 +18,7 @@ jobs:
           to: ${{ secrets.TELEGRAM_CHAT_ID }}
           token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           message: |
-            🚨 Review Requested 🚨
-            Reviewers Requested: ${{ steps.determine_reviewers.outputs.requested_reviewers }}
+            📝 Review Requested 📝
             Author: ${{ github.actor }}
             Title: ${{ github.event.pull_request.title }}
             Link: ${{ github.event.pull_request.html_url }}
