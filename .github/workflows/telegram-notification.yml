@@ -15,12 +15,12 @@ jobs:
             echo "::set-output name=event_type::Review Requested"
           fi
 
-      - name: Generate Random Event Data
-        id: generate_event_data
-        if: steps.determine_event.outputs.event_type != null
+      - name: Determine Requested Reviewers
+        id: determine_reviewers
+        if: steps.determine_event.outputs.event_type == 'Review Requested'
         run: |
-          # Generate some random event data
-          echo "::set-output name=event_data::{\"event1\": \"data1\", \"event2\": \"data2\"}"
+          requested_reviewers=$(echo "${{ github.event.pull_request.requested_reviewers }}" | jq -r '.[].login' | paste -sd ", ")
+          echo "::set-output name=requested_reviewers::$requested_reviewers"
 
       - name: Send Telegram Notification
         if: steps.determine_event.outputs.event_type != null
@@ -30,7 +30,7 @@ jobs:
           token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           message: |
             🚨 ${{ steps.determine_event.outputs.event_type }} 🚨
-            ${{ each kv in steps.generate_event_data.outputs.event_data }}${{ kv.key }}: ${{ kv.value }}${{ if ne(kv, steps.generate_event_data.outputs.event_data[-1]) }}\n${{ endif }}${{ endeach }}
             Author: ${{ github.actor }}
+            Reviewers Requested: ${{ steps.determine_reviewers.outputs.requested_reviewers }}
             Title: ${{ github.event.pull_request.title }}
             Link: ${{ github.event.pull_request.html_url }}
