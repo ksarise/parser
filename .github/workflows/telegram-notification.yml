@@ -30,7 +30,7 @@ jobs:
           token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           message: |
             🚨 ${{ steps.determine_event.outputs.event_type }} 🚨
-            ${{ tojson(steps.generate_event_data.outputs.event_data) }}
+            ${{ each kv in steps.generate_event_data.outputs.event_data }}${{ kv.key }}: ${{ kv.value }}${{ if ne(kv, steps.generate_event_data.outputs.event_data[-1]) }}\n${{ endif }}${{ endeach }}
             Author: ${{ github.actor }}
             Title: ${{ github.event.pull_request.title }}
             Link: ${{ github.event.pull_request.html_url }}
