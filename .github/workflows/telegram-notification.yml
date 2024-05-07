@@ -21,10 +21,7 @@ jobs:
             event="Pull Request"
           fi
 
-          message="🚨 $event Event 🚨
-          Author: $author
-          Title: ${{ github.event.pull_request.title }} 
-          Link: ${{ github.event.pull_request.html_url }}"
+          message=$(jq -n --arg event "$event" --arg author "$author" --arg title "${{ github.event.pull_request.title }}" --arg link "${{ github.event.pull_request.html_url }}" '{ event: $event, author: $author, title: $title, link: $link }')
           echo "::set-output name=message::$message"
 
       - name: Send Telegram Notification
