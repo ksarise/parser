@@ -5,35 +5,23 @@ on:
     types: [opened, reopened, review_requested]
   pull_request_review:
     types: [submitted]
+
 jobs:
   telegram_notification:
     runs-on: ubuntu-latest
     steps:
-      - name: Check if Review Requested
-        id: check_review_requested
-        if: github.event_name == 'pull_request_review' && github.event.action == 'submitted'
-        run: |
-          if [ "${{ github.event.review.state }}" == "requested" ]; then
-            echo "::set-output name=requested::true"
-            echo "::set-output name=requested_reviewers::${{ join(github.event.pull_request.requested_reviewers.*.login, ', ') }}"
-          else
-            echo "::set-output name=requested::false"
-          fi
-
       - name: Set Notification Message
         id: set_notification_message
         run: |
           if [ "${{ github.event_name }}" == "pull_request_review" ]; then
             author="${{ github.actor }} request review"
             event="Pull Request Review"
-            requested_reviewers="${{ steps.check_review_requested.outputs.requested_reviewers }}"
           else
             author="${{ github.actor }}"
             event="Pull Request"
-            requested_reviewers=""
           fi
 
-          message="🚨 $event Event 🚨\nAuthor: $author\n$([[ ! -z $requested_reviewers ]] && echo 'Requested Reviewers: '$requested_reviewers)\nTitle: ${{ github.event.pull_request.title }}\nLink: ${{ github.event.pull_request.html_url }}"
+          message="🚨 $event Event 🚨\nAuthor: $author\nTitle: ${{ github.event.pull_request.title }}\nLink: ${{ github.event.pull_request.html_url }}"
           echo "::set-output name=message::$message"
 
       - name: Send Telegram Notification
