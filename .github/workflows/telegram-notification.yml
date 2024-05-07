@@ -30,5 +30,4 @@ jobs:
         with:
           to: ${{ secrets.TELEGRAM_CHAT_ID }}
           token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          message: |
-              "text": ${{ toJson(steps.set_notification_message.outputs.message) }}
+          message: '{[ 🚨 ${{event}} Event 🚨 {"Title":"${{ github.event.pull_request.title }}","text":{"type":"mrkdwn","text":"${{ github.event.pull_request.html_url }}"}}]}'
