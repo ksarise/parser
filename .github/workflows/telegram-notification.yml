@@ -21,7 +21,7 @@ jobs:
             event="Pull Request"
           fi
 
-          message="🚨 $event Event 🚨\nAuthor: $author\nTitle: ${{ github.event.pull_request.title }} Link: ${{ github.event.pull_request.html_url }}"
+          message="🚨 $event Event 🚨\nAuthor: $author\nTitle: ${{ github.event.pull_request.title }}\nLink: ${{ github.event.pull_request.html_url }}"
           echo "::set-output name=message::$message"
 
       - name: Send Telegram Notification
@@ -37,7 +37,7 @@ jobs:
                       "type": "section",
                       "text": {
                           "type": "mrkdwn",
-                          "text": ${{ tojson(steps.set_notification_message.outputs.message) }}
+                          "text": ${{ toJson(steps.set_notification_message.outputs.message) }}
                       }
                   }
               ]
