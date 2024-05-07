@@ -22,8 +22,15 @@ jobs:
           to: ${{ secrets.TELEGRAM_CHAT_ID }}
           token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           message: |
-            🚨 ${{ steps.determine_event.outputs.event_type }} 🚨
+            ${{ if eq(steps.determine_event.outputs.event_type, 'Review Requested') }}
+            🚨 Review Requested 🚨
             Author: ${{ github.actor }}
             Title: ${{ github.event.pull_request.title }}
-            ${{ if eq(steps.determine_event.outputs.event_type, 'Review Requested') }}Requested Reviewers: ${{ join(github.event.pull_request.requested_reviewers.*.login, ', ') }}${{ '\n' }}${{ endif }}
+            Requested Reviewers: ${{ join(github.event.pull_request.requested_reviewers.*.login, ', ') }}
             Link: ${{ github.event.pull_request.html_url }}
+            ${{ else }}
+            🚨 Pull Request Opened 🚨
+            Author: ${{ github.actor }}
+            Title: ${{ github.event.pull_request.title }}
+            Link: ${{ github.event.pull_request.html_url }}
+            ${{ endif }}
