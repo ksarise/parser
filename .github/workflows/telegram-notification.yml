@@ -40,12 +40,12 @@ jobs:
         id: set_notification_message
         run: |
           if [ "${{ github.event_name }}" == "pull_request_review" ]; then
-            author="${{ github.actor }} request review"
             event="Pull Request Review"
+            author="${{ github.actor }} request review"
             requested_reviewers="${{ steps.check_review_requested.outputs.requested_reviewers }}"
           else
-            author="${{ github.actor }}"
             event="Pull Request"
+            author="${{ github.actor }}"
             requested_reviewers=""
           fi
 
