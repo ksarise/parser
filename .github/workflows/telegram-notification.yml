@@ -1,6 +1,6 @@
 on:
   pull_request:
-    types: [opened, reopened, review_requested]
+    types: [opened, review_requested]
 
 jobs:
   telegram_notification:
@@ -9,16 +9,17 @@ jobs:
       - name: Determine Event Type
         id: determine_event
         run: |
-          if [ "${{ github.event_name }}" == "pull_request_review" ]; then
-            echo "::set-output name=event_type::Pull Request Review"
-          else
-            echo "::set-output name=event_type::Pull Request"
+          if [ "${{ github.event.action }}" == "opened" ]; then
+            echo "::set-output name=event_type::Pull Request Opened"
+          elif [ "${{ github.event.action }}" == "review_requested" ]; then
+            echo "::set-output name=event_type::Review Requested"
           fi
 
       - name: Send Telegram Notification
+        if: steps.determine_event.outputs.event_type
         uses: appleboy/telegram-action@master
         with:
           to: ${{ secrets.TELEGRAM_CHAT_ID }}
           token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           message: |
-            🚨 ${{ github.event_name }} || ${{ steps.determine_event.outputs.event_type }} 🚨
+            🚨 ${{ steps.determine_event.outputs.event_type }} 🚨
