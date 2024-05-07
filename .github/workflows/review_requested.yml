@@ -18,7 +18,7 @@ jobs:
           # Check if requested reviewers exist and if it's an array
           if [ "${{ github.event.pull_request.requested_reviewers }}" != "null" ] && [ "$(echo "${{ github.event.pull_request.requested_reviewers }}" | jq 'length')" -gt 0 ]; then
             if [ "$(echo "${{ github.event.pull_request.requested_reviewers }}" | jq 'length')" -gt 1 ]; then
-              last_reviewer=$(echo "${{ github.event.pull_request.requested_reviewers[-1].login }}")
+              last_reviewer=$(echo "${{ github.event.pull_request.requested_reviewers[github.event.pull_request.requested_reviewers.length-1].login }}")
             else
               last_reviewer=$(echo "${{ github.event.pull_request.requested_reviewers[0].login }}")
             fi
