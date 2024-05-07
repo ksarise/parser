@@ -10,9 +10,9 @@ jobs:
         id: determine_event
         run: |
           if [ "${{ github.event.action }}" == "opened" ]; then
-            echo "::set-output name=event_type::Pull Request Opened"
+            echo "event_type=🚨Pull Request Opened🚨" >> $GITHUB_ENV
           elif [ "${{ github.event.action }}" == "review_requested" ]; then
-            echo "::set-output name=event_type::Review Requested"
+            echo "event_type=Review Requested" >> $GITHUB_ENV
           fi
 
       - name: Determine Requested Reviewers
@@ -22,9 +22,9 @@ jobs:
           # Check if requested reviewers exist and if it's an array
           if [ "${{ github.event.pull_request.requested_reviewers }}" != "null" ] && [ "$(echo "${{ github.event.pull_request.requested_reviewers }}" | jq 'type')" == "array" ]; then
             requested_reviewers=$(echo "${{ github.event.pull_request.requested_reviewers }}" | jq -r '.[].login' | paste -sd ", ")
-            echo "::set-output name=requested_reviewers::$requested_reviewers"
+            echo "requested_reviewers=$requested_reviewers" >> $GITHUB_ENV
           else
-            echo "::set-output name=requested_reviewers::N/A"
+            echo "requested_reviewers=N/A" >> $GITHUB_ENV
           fi
 
       - name: Send Telegram Notification
@@ -34,8 +34,9 @@ jobs:
           to: ${{ secrets.TELEGRAM_CHAT_ID }}
           token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           message: |
-            🚨 ${{ steps.determine_event.outputs.event_type }} 🚨
-            Reviewers Requested: ${{ steps.determine_reviewers.outputs.requested_reviewers }}
+            ${{ steps.determine_event.outputs.event_type }}
+            Reviewers Requested: ${{ env.requested_reviewers }}
+            ${{ github.event.pull_request.requested_reviewers }}
             Author: ${{ github.actor }}
             Title: ${{ github.event.pull_request.title }}
             Link: ${{ github.event.pull_request.html_url }}
