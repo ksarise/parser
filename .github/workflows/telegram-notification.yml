@@ -15,6 +15,17 @@ jobs:
             echo "::set-output name=event_type::Review Requested"
           fi
 
+      - name: Set Notification Message
+        id: set_notification_message
+        run: |
+          echo "🚨 ${{ steps.determine_event.outputs.event_type }} 🚨" >> message.txt
+          echo "Author: ${{ github.actor }}" >> message.txt
+          echo "Title: ${{ github.event.pull_request.title }}" >> message.txt
+          if [ "${{ steps.determine_event.outputs.event_type }}" == "Review Requested" ]; then
+            echo "Requested Reviewers: ${{ join(github.event.pull_request.requested_reviewers.*.login, ', ') }}" >> message.txt
+          fi
+          echo "Link: ${{ github.event.pull_request.html_url }}" >> message.txt
+
       - name: Send Telegram Notification
         if: steps.determine_event.outputs.event_type != null
         uses: appleboy/telegram-action@master
@@ -22,15 +33,4 @@ jobs:
           to: ${{ secrets.TELEGRAM_CHAT_ID }}
           token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           message: |
-            ${{ if eq(steps.determine_event.outputs.event_type, 'Review Requested') }}
-            🚨 Review Requested 🚨
-            Author: ${{ github.actor }}
-            Title: ${{ github.event.pull_request.title }}
-            Requested Reviewers: ${{ join(github.event.pull_request.requested_reviewers.*.login, ', ') }}
-            Link: ${{ github.event.pull_request.html_url }}
-            ${{ else }}
-            🚨 Pull Request Opened 🚨
-            Author: ${{ github.actor }}
-            Title: ${{ github.event.pull_request.title }}
-            Link: ${{ github.event.pull_request.html_url }}
-            ${{ endif }}
+            $(cat message.txt)
