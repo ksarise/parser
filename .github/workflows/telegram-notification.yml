@@ -30,15 +30,5 @@ jobs:
         with:
           to: ${{ secrets.TELEGRAM_CHAT_ID }}
           token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          payload: |
-            {
-              "blocks": [
-                  {
-                      "type": "section",
-                      "text": {
-                          "type": "mrkdwn",
-                          "text": ${{ toJson(steps.set_notification_message.outputs.message) }}
-                      }
-                  }
-              ]
-            }
+          message: |
+              "text": ${{ toJson(steps.set_notification_message.outputs.message) }}
