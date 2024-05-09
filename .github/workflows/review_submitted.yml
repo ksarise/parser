@@ -18,7 +18,7 @@ jobs:
           to: ${{ secrets.TELEGRAM_CHAT_ID }}
           token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           message: |
-            👀 *Review Submitted* 👀
+            👀 Review Submitted 👀
             Author: ${{ github.actor }}
             Title: ${{ github.event.pull_request.title }}
             Link: ${{ github.event.pull_request.html_url }}
