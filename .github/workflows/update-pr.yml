@@ -9,6 +9,6 @@ jobs:
         uses: tzkhan/pr-update-action@v2
         with:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
-          base-branch-regex: "(feat|fix|refactor|chore|docs|style)/RSS-ECOMM-[1-9]_*"
-          head-branch-regex: "(feat|fix|refactor|chore|docs|style)/RSS-ECOMM-[1-9]_*"
+          base-branch-regex: "^(chore|docs|feat|fix|refactor)/RSS-ECOMM-[0-9]_[a-zA-Z0-9-/]+$"
+          head-branch-regex: "^(chore|docs|feat|fix|refactor): RSS-ECOMM-[0-9]_[a-zA-Z0-9-/]+$"
           title-template: "[%headbranch%] "
