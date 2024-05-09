@@ -1,0 +1,17 @@
+name: Update PR Title and Body
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+
+jobs:
+  update_pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Update PR Title and Body
+        uses: gautamkrishnar/update-pr-action@v2
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          base-branch-regex: "^(feat|fix|refactor|chore|docs|style)/RSS-ECOMM-[1-9]_*"
+          head-branch-regex: "^(feat|fix|refactor|chore|docs|style)/RSS-ECOMM-[1-9]_*"
+          title-template: "%headbranch%"
