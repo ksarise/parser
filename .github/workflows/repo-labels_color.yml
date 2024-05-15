@@ -1,7 +1,7 @@
 name: Test CI
 on:
   push:
-    branches: [main]
+    branches: [develop]
 jobs:
   test:
     name: Something that updates labels
