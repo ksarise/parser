@@ -15,7 +15,7 @@ const format = require("./AutoFormatter.js");
   });
   // Start parsing every card
   let ProductCards = [];
-  for (let linkNumber = 0; linkNumber < 20; linkNumber += 1) {
+  for (let linkNumber = 0; linkNumber < 40; linkNumber += 1) {
     const itemPage = await browser.newPage();
     await itemPage.goto(arr[linkNumber].Link);
 
@@ -54,11 +54,8 @@ const format = require("./AutoFormatter.js");
         let imagesNumber = getUniqueImagesUrl(productImageElements).length;
         console.log("iter", linkNumber, "images", imagesNumber);
         let imagesRowNumber;
-        if (imagesNumber >= 6) {
-          imagesRowNumber = 5;
-        } else {
-          imagesRowNumber = imagesNumber - 1;
-        }
+        imagesRowNumber = imagesNumber;
+
         let ProductCard = [];
         for (let i = 0; i < imagesRowNumber; i += 1) {
           let imageCard = [

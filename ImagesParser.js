@@ -18,7 +18,7 @@ const path = require("path");
 
   // Start parsing every card
   let ProductCards = [];
-  for (let linkNumber = 0; linkNumber < 20; linkNumber++) {
+  for (let linkNumber = 0; linkNumber < 40; linkNumber++) {
     try {
       const itemPage = await browser.newPage();
       await itemPage.goto(arr[linkNumber].Link);
@@ -37,7 +37,7 @@ const path = require("path");
             const uniqueSrcSet = new Set();
             elements.forEach((element) => {
               const src = element.getAttribute("src");
-              if (src && src.indexOf("clone") === -1) {
+              if (src) {
                 const bigSrc = src.replace("/80/", "/700/");
                 uniqueSrcSet.add(bigSrc);
               }
@@ -51,11 +51,7 @@ const path = require("path");
           );
           let images = getUniqueImagesUrl(productImageElements);
           let selectedUrls;
-          if (images.length >= 6) {
-            selectedUrls = images.slice(0, 4).concat(images.slice(-2, -1));
-          } else {
-            selectedUrls = images;
-          }
+          selectedUrls = images;
 
           return selectedUrls;
         } catch (error) {

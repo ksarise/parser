@@ -20,7 +20,7 @@ const { getCategories } = require("./CategoriesFormatter.js");
   // Start parsing every card
   let ProductCards = [];
   let allCategories = [];
-  for (let linkNumber = 0; linkNumber < 20; linkNumber += 1) {
+  for (let linkNumber = 0; linkNumber < 40; linkNumber += 1) {
     try {
       const itemPage = await browser.newPage();
       await itemPage.goto(arr[linkNumber].Link);
