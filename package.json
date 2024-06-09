@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "test": "jest --ci --reporters=default --reporters=jest-junit"
+    "test": "jest --ci --reporters=default --reporters=jest-junit --collectCoverageFrom='src/**/*.{ts,tsx}'"
   },
   "devDependencies": {
     "@types/jest": "^29.5.12",
