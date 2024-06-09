@@ -32,16 +32,8 @@ jobs:
         with:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-          build_directory: dist  # Ensure this matches your actual build directory
+          build_directory: dist # Ensure this matches your actual build directory
           deploy_alias: ${{ env.BRANCH_NAME }}
-
-      - name: Set Netlify preview URL
-        run: echo "NETLIFY_PREVIEW_URL=$(cat $GITHUB_WORKSPACE/netlify-deploy-output.txt | grep -oP 'Live URL: \K.*')" >> $GITHUB_ENV
-
-      - name: Debug Netlify preview URL
-        run: echo "Netlify Preview URL: ${{ env.NETLIFY_PREVIEW_URL }}"
-
-      # Creates a status check with link to preview
       - name: Status check
         uses: Sibz/github-status-action@v1.1.1
         with:
