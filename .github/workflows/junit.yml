@@ -16,7 +16,7 @@ jobs:
 
       - name: Run tests
         run: |
-          npx jest --coverage --collectCoverageFrom='src/**/*.{ts,tsx}'"
+          npx jest --coverage --collectCoverageFrom='src/**/*.{ts,tsx}'
 
       - name: Jest Coverage Comment
         uses: MishaKav/jest-coverage-comment@main
