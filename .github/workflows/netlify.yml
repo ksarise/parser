@@ -12,6 +12,8 @@ jobs:
     steps:
       - name: Build project
         run: npm run build
+      - name: Navigate to project directory
+        run: cd parser
       - uses: actions/checkout@v3
       - uses: fntsrlike/action-netlify-deploy@v2
         with:
