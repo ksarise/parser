@@ -4,11 +4,6 @@ on:
   pull_request:
     types: ["opened", "edited", "synchronize"]
 
-permissions:
-  contents: read
-  statuses: write
-  pull-requests: write
-
 jobs:
   deploy:
     name: "Deploy"
@@ -19,29 +14,11 @@ jobs:
 
       # Sets the branch name as environment variable
       - uses: nelonoel/branch-name@v1.0.1
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build project
-        run: npm run build
-
-      - name: Deploy to Netlify
-        id: netlify_deploy
-        uses: fntsrlike/action-netlify-deploy@v2
+      - uses: fntsrlike/action-netlify-deploy@v2
         with:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-          build_directory: dist # Ensure this matches your actual build directory
           deploy_alias: ${{ env.BRANCH_NAME }}
-
-      - name: Capture Netlify preview URL
-        run: |
-          echo "NETLIFY_PREVIEW_URL=$(cat $GITHUB_WORKSPACE/netlify-deploy-output.txt | grep -oP 'Live URL: \K.*')" >> $GITHUB_ENV
-
-      - name: Debug Netlify preview URL
-        run: |
-          echo "Netlify Preview URL: ${{ env.NETLIFY_PREVIEW_URL }}"
 
       # Creates a status check with link to preview
       - name: Status check
