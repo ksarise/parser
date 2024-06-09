@@ -39,7 +39,17 @@ const config: Config = {
 
   // A list of reporter names that Jest uses when writing coverage reports
   
-    "reporters": [ "default", "jest-junit" ],
+  reporters: [
+    "default",
+    [
+      "jest-junit",
+      {
+        outputDirectory: "./coverage",
+        outputName: "junit.xml",
+      },
+    ],
+  ],
+  coverageReporters: ["json-summary", "text", "lcov"],
   
 
   // An object that configures minimum threshold enforcement for coverage results

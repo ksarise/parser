@@ -1,32 +1,28 @@
-name: Update Coverage in README
+name: Jest Coverage Comment
 on:
   pull_request:
-    types: ["opened", "edited", "synchronize"]
+    types: [opened, synchronize]
 jobs:
-  update-coverage-in-readme:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-        with:
-          persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
-          fetch-depth: 0 # otherwise, you will fail to push refs to dest repo
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: |
+          npx jest --coverage
 
       - name: Jest Coverage Comment
-        if: github.ref == 'refs/heads/main'
-        id: coverageComment
         uses: MishaKav/jest-coverage-comment@main
         with:
-          hide-summary: true
-          coverage-summary-path: ./coverage/coverage-final.json
-
-      - name: Update README with Coverage HTML
-        if: github.ref == 'refs/heads/main'
-        run: |
-          sed -i '/<!-- Jest Coverage Comment:Begin -->/,/<!-- Jest Coverage Comment:End -->/c\<!-- Jest Coverage Comment:Begin -->\n${{ steps.coverageComment.outputs.summaryHtml }}\n<!-- Jest Coverage Comment:End -->' ./README.md
-
-      - name: Commit & Push changes in README
-        if: github.ref == 'refs/heads/main'
-        uses: actions-js/push@master
-        with:
-          message: Update coverage in README
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          coverage-summary-path: ./coverage/coverage-summary.json
+          junitxml-path: ./coverage/junit.xml
+          title: "Jest Coverage Report"
+          summary-title: "Coverage Summary"
+          badge-title: "Coverage"
+          junitxml-title: "Test Results"
+          create-new-comment: true
