@@ -14,10 +14,18 @@ jobs:
 
       # Sets the branch name as environment variable
       - uses: nelonoel/branch-name@v1.0.1
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build project
+        run: npm run build
+
       - uses: fntsrlike/action-netlify-deploy@v2
         with:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+          build_directory: dist # Update this if your build directory is different
           deploy_alias: ${{ env.BRANCH_NAME }}
 
       # Creates a status check with link to preview
