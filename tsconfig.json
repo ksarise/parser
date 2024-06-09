@@ -27,5 +27,5 @@
     "jest.config.ts",
     "test",
     "vite.config.ts"
-  ]
+, "vite-project/src/main.ts", "vite-project/src/counter.ts"  ]
 }
