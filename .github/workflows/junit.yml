@@ -2,6 +2,9 @@ name: Jest Coverage Comment
 on:
   pull_request:
     types: [opened, synchronize]
+permissions:
+  pull-requests: write
+  contents: read
 jobs:
   build:
     runs-on: ubuntu-latest
