@@ -1,8 +1,7 @@
 name: Update Coverage in README
 on:
-  push:
-    branches:
-      - main
+  pull_request:
+    types: ["opened", "edited", "synchronize"]
 jobs:
   update-coverage-in-readme:
     runs-on: ubuntu-latest
