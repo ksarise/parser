@@ -26,14 +26,15 @@ jobs:
       - name: Build project
         run: npm run build
 
-      - name: Deploy to Netlify
-        id: netlify_deploy
-        uses: fntsrlike/action-netlify-deploy@v2
+      # Sets the branch name as environment variable
+      - uses: nelonoel/branch-name@v1.0.1
+      - uses: fntsrlike/action-netlify-deploy@v2
         with:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-          build_directory: dist # Ensure this matches your actual build directory
           deploy_alias: ${{ env.BRANCH_NAME }}
+
+      # Creates a status check with link to preview
       - name: Status check
         uses: Sibz/github-status-action@v1.1.1
         with:
