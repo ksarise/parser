@@ -1,0 +1,41 @@
+body: {
+  statusCode: 400,
+  message: "The enum values contain duplicate keys: '[FlexRating-5-1Soft-10Stiff-,FlexRating-7-1Soft-10Stiff-,FlexRating-3-1Soft-5Stiff-,FlexRating-4-1Soft-5Stiff-]'.",
+  errors: [
+    {
+      code: 'DuplicateEnumValues',
+      message: "The enum values contain duplicate keys: '[FlexRating-5-1Soft-10Stiff-,FlexRating-7-1Soft-10Stiff-,FlexRating-3-1Soft-5Stiff-,FlexRating-4-1Soft-5Stiff-]'.",
+      duplicates: [
+        'FlexRating-5-1Soft-10Stiff-',
+        'FlexRating-7-1Soft-10Stiff-',
+        'FlexRating-3-1Soft-5Stiff-',
+        'FlexRating-4-1Soft-5Stiff-'
+      ]
+    },
+    {
+      code: 'DuplicateEnumValues',
+      message: "The enum values contain duplicate keys: '[CoreCore-Fullpoplarwithbeechhardwoodlaidtiptotailalongtheinsertsstrengtheningtheboard-sbackbone-reinforcingtheinsertsandproducingmorepop-]'.",
+      duplicates: [
+        'CoreCore-Fullpoplarwithbeechhardwoodlaidtiptotailalongtheinsertsstrengtheningtheboard-sbackbone-reinforcingtheinsertsandproducingmorepop-'
+      ]
+    },
+    {
+      code: 'DuplicateEnumValues',
+      message: "The enum values contain duplicate keys: '[SuperSlickX-Notabasicextrudedbase-Ithasthehighestmolecularcontentavailableforanextrudedbase-Thatmeansit-ssuperslick-durableandmaintenance-free-]'.",    
+      duplicates: [
+        'SuperSlickX-Notabasicextrudedbase-Ithasthehighestmolecularcontentavailableforanextrudedbase-Thatmeansit-ssuperslick-durableandmaintenance-free-'
+      ]
+    },
+    {
+      code: 'DuplicateEnumValues',
+      message: "The enum values contain duplicate keys: '[6-2,9-5]'.",
+      duplicates: [ '6-2', '9-5' ]
+    },
+    {
+      code: 'DuplicateEnumValues',
+      message: "The enum values contain duplicate keys: '[4-75]'.",
+      duplicates: [ '4-75' ]
+    }
+  ]
+}
+}
