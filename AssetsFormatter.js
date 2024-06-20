@@ -14,102 +14,178 @@ const format = require("./AutoFormatter.js");
     return links.map((link) => ({ Link: link }));
   });
   // Start parsing every card
-  let ProductCards = [];
-  for (let linkNumber = 0; linkNumber < 20; linkNumber += 1) {
+  let ProductImagesCards = [];
+  for (let linkNumber = 1; linkNumber < 2; linkNumber += 1) {
     const itemPage = await browser.newPage();
     await itemPage.goto(arr[linkNumber].Link);
 
     // Product Card parse and autoformat
-    let ProductCard = await itemPage.evaluate((linkNumber) => {
-      try {
-        let titleDetails =
-          document.querySelector(".pdp-header-title").innerText;
+    let { ProductImagesCard, imagesSrcList } = await itemPage.evaluate(
+      (linkNumber) => {
+        try {
+          let titleDetails =
+            document.querySelector(".pdp-header-title").innerText;
 
-        let details = document.querySelector(
-          ".pdp-content-section-body"
-        ).children;
+          let details = document.querySelector(
+            ".pdp-content-section-body"
+          ).children;
 
-        function getUniqueImagesUrl(productImagesElem) {
-          const elements = Array.from(productImagesElem);
-          const uniqueSrcSet = new Set();
-          elements.forEach((element) => {
-            const src = element.getAttribute("src");
-            if (src && src.indexOf("clone") === -1) {
-              uniqueSrcSet.add(src);
+          function getUniqueImagesUrl(hero, productImagesElem) {
+            const elements = Array.from(productImagesElem);
+            let uniqueSrcSet = new Set();
+            if (hero) {
+              const heroSrc = hero.getAttribute("src");
+              if (heroSrc) {
+                const bigHeroSrc = heroSrc.replace("/80/", "/700/");
+                uniqueSrcSet.add(bigHeroSrc);
+              }
             }
-          });
-          return Array.from(uniqueSrcSet);
-        }
-
-        function skuGen(name) {
-          let sum = 0;
-          for (let i = 0; i < name.length; i++) {
-            sum += name.charCodeAt(i);
+            elements.forEach((element) => {
+              const src = element.getAttribute("src");
+              if (
+                src &&
+                src.indexOf("youtube") === -1 &&
+                src.indexOf("clone") === -1
+              ) {
+                const bigSrc = src.replace("/80/", "/700/");
+                uniqueSrcSet.add(bigSrc);
+              }
+            });
+            if (uniqueSrcSet.size < 1) {
+              elements.forEach((element) => {
+                const src = element.getAttribute("src");
+                if (src) {
+                  const bigSrc = src.replace("/80/", "/700/");
+                  uniqueSrcSet.add(bigSrc);
+                }
+              });
+            }
+            return Array.from(uniqueSrcSet);
           }
-          return sum;
+
+          function skuGen(name) {
+            let sum = 0;
+            for (let i = 0; i < name.length; i++) {
+              sum += name.charCodeAt(i);
+            }
+            return sum;
+          }
+          let productImageElements = document.querySelectorAll(
+            ".pdp-hero-alt-thumb"
+          );
+          let productHeroImageElement = document.querySelector(
+            ".pdp-hero-image.active"
+          );
+          let imagesNumber = getUniqueImagesUrl(
+            productHeroImageElement,
+            productImageElements
+          ).length;
+          let imagesSrcList = getUniqueImagesUrl(
+            productHeroImageElement,
+            productImageElements
+          );
+          let variantsNum = document.querySelectorAll(
+            ".spec-table thead td"
+          ).length;
+          console.log("iter", linkNumber, "images", imagesNumber);
+          let imagesRowNumber;
+          imagesRowNumber = imagesNumber;
+
+          let ProductImagesCard = [];
+          for (let i = 0; i < imagesRowNumber; i += 1) {
+            let imageCard = [
+              { dataObject: "data-object", variant: "image" },
+              { key: "key", keyValue: `KeySnowboard00${linkNumber}` },
+              {
+                variantSku: "variants.sku",
+                variantSkuValue: `SKU-SNW-${skuGen(
+                  titleDetails.replace(/Snowboard.*$/, "")
+                )}`,
+              },
+              {
+                variantsKey: "variants.key",
+                variantKeyValue: `VariantKeySNW-${skuGen(
+                  titleDetails.replace(/Snowboard.*$/, "")
+                )}`,
+              },
+              {
+                variantsNameEn: "variants.images.label",
+                variantsNameEnValue: `SNW-Image${linkNumber}-0${i + 1}`,
+              },
+              {
+                uri: "variants.images.url",
+                uriValue: `https://raw.githubusercontent.com/ksarise/parser/main/assets/SNW-${linkNumber}-01/${i}.jpg`,
+              },
+              {
+                width: "variants.images.dimensions.w",
+                widthValue: "700",
+              },
+              {
+                height: "variants.images.dimensions.h",
+                widthValue: "700",
+              },
+            ];
+            let dataArray = imageCard.map((obj) => Object.values(obj));
+            ProductImagesCard.push(dataArray);
+          }
+
+          for (let i = 0; i < variantsNum; i += 1) {
+            let variantCard = [
+              { dataObject: "data-object", variant: "variant" },
+              { key: "key", keyValue: `KeySnowboard10${linkNumber}` },
+              {
+                variantSku: "variants.sku",
+                variantSkuValue: `SKU-SNW-${skuGen(
+                  titleDetails.replace(/Snowboard.*$/, "")
+                )}-000${i + 1}`,
+              },
+              {
+                variantsKey: "variants.key",
+                variantKeyValue: `VariantKeySNW-${skuGen(
+                  titleDetails.replace(/Snowboard.*$/, "")
+                )}-000${i + 1}`,
+              },
+              {
+                variantsNameEn: "variants.images.label",
+                variantsNameEnValue: `SNW-Image${linkNumber}-0${i + 1}-000${
+                  i + 1
+                }`,
+              },
+              {
+                uri: "variants.images.url",
+                uriValue: `https://raw.githubusercontent.com/ksarise/parser/main/assets/SNW-${linkNumber}-01/0.jpg`,
+              },
+              {
+                width: "variants.images.dimensions.w",
+                widthValue: "700",
+              },
+              {
+                height: "variants.images.dimensions.h",
+                widthValue: "700",
+              },
+            ];
+            let dataArray = variantCard.map((obj) => Object.values(obj));
+            ProductImagesCard.push(dataArray);
+          }
+          return { ProductImagesCard, imagesSrcList };
+        } catch (error) {
+          console.log(linkNumber, error);
         }
-        let productImageElements = document.querySelectorAll(
-          ".pdp-hero-alt-thumb"
-        );
-        let imagesNumber = getUniqueImagesUrl(productImageElements).length;
-        console.log("iter", linkNumber, "images", imagesNumber);
-        let imagesRowNumber;
-        if (imagesNumber >= 6) {
-          imagesRowNumber = 5;
-        } else {
-          imagesRowNumber = imagesNumber - 1;
-        }
-        let ProductCard = [];
-        for (let i = 0; i < imagesRowNumber; i += 1) {
-          let imageCard = [
-            { dataObject: "data-object", variant: "image" },
-            { key: "key", keyValue: `snowboard10${linkNumber}` },
-            {
-              variantSku: "variants.sku",
-              variantSkuValue: `SNW-${skuGen(titleDetails)}-01`,
-            },
-            {
-              variantsKey: "variants.key",
-              variantKeyValue: `SNW-${linkNumber}-01`,
-            },
-            {
-              variantsNameEn: "variants.images.label",
-              variantsNameEnValue: `SNW-Image${linkNumber}-0${i + 1}`,
-            },
-            {
-              uri: "variants.images.url",
-              uriValue: `https://raw.githubusercontent.com/ksarise/parser/main/assets/SNW-${linkNumber}-01/${i}.jpg`,
-            },
-            {
-              width: "variants.images.dimensions.w",
-              widthValue: "700",
-            },
-            {
-              height: "variants.images.dimensions.h",
-              widthValue: "700",
-            },
-          ];
-          let dataArray = imageCard.map((obj) => Object.values(obj));
-          ProductCard.push(dataArray);
-        }
-        return ProductCard;
-      } catch (error) {
-        console.log(linkNumber, error);
-      }
-    }, linkNumber);
-    // console.log(ProductCard);
+      },
+      linkNumber
+    );
+    console.log(imagesSrcList);
     itemPage.close();
-    if (ProductCard && ProductCard.length > 0) {
-      let dataArray = ProductCard.map((obj) => Object.values(obj));
-      ProductCards.push(dataArray);
+    if (ProductImagesCard && ProductImagesCard.length > 0) {
+      let dataArray = ProductImagesCard.map((obj) => Object.values(obj));
+      ProductImagesCards.push(dataArray);
     }
-    // console.log(createKeyValueArrays(ProductCards));
+    // console.log(createKeyValueArrays(ProductImagesCards));
   }
-  // console.log(ProductCards);
   // Preparing data for export
   function flattenArray(arrayOfArrays) {
     return arrayOfArrays.reduce((acc, curr) => acc.concat(curr), []);
   }
-  format.formatAndExportData(flattenArray(ProductCards), "Assets");
+  format.formatAndExportData(flattenArray(ProductImagesCards), "Assets");
   await browser.close();
 })();

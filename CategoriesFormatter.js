@@ -17,8 +17,14 @@ function getCategories(allCategories) {
   }
   let CategoryCards = [];
   uniqueCatnames.forEach((category, index) => {
-    let subCat = splitStringByComma(category)[0];
-    let mainCat = splitStringByComma(category)[1];
+    let subCat = splitStringByComma(category)[0].replace(
+      /[^a-zA-Z0-9\s-]/g,
+      ""
+    );
+    let mainCat = splitStringByComma(category)[1].replace(
+      /[^a-zA-Z0-9\s-]/g,
+      ""
+    );
     let mainCatKey = "";
     let mainCatId = "";
     if (mainCat) {
