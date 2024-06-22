@@ -21,7 +21,7 @@ const { getCategories } = require("./CategoriesFormatter.js");
   let ProductImagesCards = [];
   let errors = [];
   let allCategories = [];
-  for (let linkNumber = 0; linkNumber < 300; linkNumber += 1) {
+  for (let linkNumber = 0; linkNumber < 270; linkNumber += 1) {
     const itemPage = await browser.newPage();
     await itemPage.goto(arr[linkNumber].Link);
 
@@ -228,7 +228,7 @@ const { getCategories } = require("./CategoriesFormatter.js");
 
       return { productImages, detailsImages };
     });
-    let ProductVariants = await itemPage.evaluate((linkNumber, errors) => {
+    let ProductVariants = await itemPage.evaluate((linkNumber) => {
       try {
         function attribCsvFormat(str, attType) {
           const index = str.indexOf("(");
@@ -437,6 +437,13 @@ const { getCategories } = require("./CategoriesFormatter.js");
           .querySelector('meta[name="twitter:data1"]')
           .getAttribute("content")
           .replace(/\$|\./g, "");
+        if (
+          !productPrice ||
+          !Number(productPrice) ||
+          Number(productPrice) < 10000
+        ) {
+          productPrice = `${Math.floor(Math.random() * 40000 + 10000)}`;
+        }
 
         let attribElemList = document.querySelectorAll(".pdp-spec-list-item");
         let attribDetailsList = document.querySelectorAll(".pdp-feature");
@@ -456,7 +463,7 @@ const { getCategories } = require("./CategoriesFormatter.js");
         );
         return ProductVariants;
       } catch (error) {
-        errors.push({ linkNumber: linkNumber, error: error.message });
+        console.log(linkNumber, error);
       }
     }, linkNumber);
 
@@ -488,7 +495,7 @@ const { getCategories } = require("./CategoriesFormatter.js");
         let terrainCat = specsTerrain.replace(/\s/g, "").split(",");
         return {
           abilityLevel: evoData?.abilityLevel || null,
-          brand: evoData?.brand.replace(/\s/g, "") || null,
+          brand: evoData?.brand.replace(/\s/g, "").replace(/\./g, "") || null,
           ageGroup: evoData?.ageGroup || null,
           terrain: terrainCat || null,
         };
@@ -496,7 +503,6 @@ const { getCategories } = require("./CategoriesFormatter.js");
         console.error(`Error occurred at `, error);
       }
     });
-    console.log(scriptParse);
     // Format categories
     function addKeys(key) {
       let mainCats = Array(4);
@@ -533,7 +539,7 @@ const { getCategories } = require("./CategoriesFormatter.js");
     }
 
     allCategories.push(addKeys(""));
-    console.log(allCategories);
+    console.log(ProductVariants);
     ProductVariants.forEach((ProductCard) => {
       ProductCard.push(addKeys("Key"));
       if (ProductCard && ProductCard.length > 0) {
@@ -583,10 +589,11 @@ const { getCategories } = require("./CategoriesFormatter.js");
           if (!uniqueAttributes[attributeName]) {
             uniqueAttributes[attributeName] = new Set();
           }
-          uniqueAttributes[attributeName].add(value.replace(/\s/g, ""));
+          uniqueAttributes[attributeName].add(value);
         }
       });
     });
+
     for (const key in uniqueAttributes) {
       uniqueAttributes[key] = Array.from(uniqueAttributes[key]);
     }
@@ -595,15 +602,30 @@ const { getCategories } = require("./CategoriesFormatter.js");
   }
 
   const uniqueAttributes = getUniqueAttributes(ProductCards);
+
   function createProductDraft(uniqueAttributes) {
     const attributes = Object.keys(uniqueAttributes).map((attributeName) => {
+      const valueKeys = {};
       return {
         type: {
           name: "enum",
-          values: uniqueAttributes[attributeName].map((value) => ({
-            key: value.replace(/\s/g, "").replace(/[^a-zA-Z0-9\_\s-]/g, "-"),
-            label: value,
-          })),
+          values: uniqueAttributes[attributeName].map((value) => {
+            const formattedKey = value
+              .replace(/\s/g, "")
+              .replace(/[^a-zA-Z0-9\_\s-]/g, "-");
+            if (!valueKeys[formattedKey]) {
+              valueKeys[formattedKey] = 0;
+            }
+            valueKeys[formattedKey]++;
+            const uniqueKey =
+              valueKeys[formattedKey] > 1
+                ? `${formattedKey}-${valueKeys[formattedKey]}`
+                : formattedKey;
+            return {
+              key: uniqueKey,
+              label: value,
+            };
+          }),
         },
         name: `${attributeName}`
           .replace(/\s/g, "")
